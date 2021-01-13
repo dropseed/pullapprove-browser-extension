@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": "parcel content.js --no-source-maps",
+    "format": "prettier --write *.js components"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "@primer/components": "^22.0.3",
+    "@primer/octicons-react": "^11.2.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "styled-components": "^5.2.1"
+  }
+}
