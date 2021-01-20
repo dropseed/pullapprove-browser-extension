@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "parcel content.js --no-source-maps",
-    "format": "prettier --write *.js components"
+    "format": "prettier --write *.js components",
+    "pre-commit": "prettier --check *.js components"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4",
