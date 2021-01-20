@@ -2,6 +2,15 @@
   "manifest_version": 2,
   "name": "PullApprove",
   "version": "0.1.0",
+  "author": "Dropseed",
+  "description": "Integrates PullApprove into the GitHub interface",
+  "icons": {
+    "16": "img/icon-16.png",
+    "48": "img/icon-48.png",
+    "128": "img/icon-128.png"
+  },
+  "incognito": "split",
+  "homepage_url": "https://www.pullapprove.com/",
   "content_scripts": [
     {
       "matches": [

@@ -1,52 +1,79 @@
 import React from "react";
-import { BaseStyles, Box, Flex, Heading } from "@primer/components";
-import Status from "./status";
-import Group from "./group";
+import SidebarReport from "./sidebar-report";
+import { getCurrentUsername, getURLParameterByName } from "./utils";
 
 export default class Sidebar extends React.Component {
-  // openFullReport = () => {
-  //     const w = 800
-  //     const h = 600
-  //     const y = window.top.outerHeight / 2 + window.top.screenY - (h / 2);
-  //     const x = window.top.outerWidth / 2 + window.top.screenX - (w / 2);
-  //     window.open(this.props.reportURL, "pullapprove-report", `width=${w},height=${h},top=${y},left=${x}`)
-  // }
-  render() {
-    const { reportData, reportURL, currentUsername } = this.props;
-    const groupNodes = [];
-    Object.entries(reportData.status.groups).forEach(([name, data]) => {
-      if (data.is_active) {
-        groupNodes.push(
-          <Group
-            key={name}
-            name={name}
-            data={data}
-            currentUsername={currentUsername}
-          />
-        );
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  componentDidMount() {
+    this.setState({
+      currentUsername: getCurrentUsername(),
+      observer: this.createObserver(),
+      reports: this.findReports(this.props.mergingNode),
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.state.observer) {
+      this.state.observer.disconnect();
+    }
+  }
+
+  createObserver() {
+    const sidebar = this;
+    const observerCallback = function (mutationsList, observer) {
+      const firstMutation = mutationsList[0];
+      if (
+        firstMutation.type === "childList" &&
+        firstMutation.addedNodes.length === 1 &&
+        firstMutation.addedNodes[0].id === sidebar.props.mergingNode.id
+      ) {
+        sidebar.setState({
+          reports: sidebar.findReports(firstMutation.addedNodes[0]),
+        });
       }
+    };
+
+    const observer = new MutationObserver(observerCallback);
+
+    observer.observe(this.props.mergingNode.parentNode, {
+      childList: true,
+      subtree: true,
     });
 
-    return (
-      <BaseStyles>
-        <div className="discussion-sidebar-item">
-          <Flex
-            alignItems="center"
-            justifyContent="space-between"
-            className="discussion-sidebar-heading text-bold"
-          >
-            <div>PullApprove</div>
-            <a href={reportURL}>View report</a>
-          </Flex>
-          <Status
-            state={reportData.status.state}
-            explanation={reportData.status.explanation}
-          />
-          {groupNodes.length > 0 ? groupNodes : null}
-        </div>
-        {/* Dumb visual hack to get the divider styling as if it were next to the other sidebar items */}
-        <div className="discussion-sidebar-item"></div>
-      </BaseStyles>
-    );
+    return observer;
+  }
+
+  findReports(targetNode) {
+    const links = targetNode.querySelectorAll(".status-actions");
+    const reports = {};
+    links.forEach((link) => {
+      const statusName = link.parentNode.previousElementSibling.children[0].innerText.trim();
+      if (
+        statusName.toLowerCase().indexOf("pullapprove") !== -1 &&
+        getURLParameterByName(link.href, "url") !== null
+      ) {
+        reports[statusName] = link.href;
+      }
+    });
+    return reports;
+  }
+
+  render() {
+    const { reports, currentUsername } = this.state;
+    if (!reports) {
+      return null;
+    }
+    return Object.entries(reports).map(([statusName, url]) => (
+      <SidebarReport
+        key={statusName}
+        name={statusName}
+        currentUsername={currentUsername}
+        reportURL={url}
+      />
+    ));
   }
 }

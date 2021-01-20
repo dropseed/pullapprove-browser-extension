@@ -36,7 +36,7 @@ export default class Group extends React.Component {
     return (
       <Box mb="3">
         <Flex alignContent="center" justifyContent="space-between">
-          <div className="text-bold">{name}</div>
+          <code className="text-bold">{name}</code>
           <div>
             <Text mr={1}>
               {data.score}/{data.required}
