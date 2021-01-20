@@ -1,3 +1,5 @@
 /node_modules
 /dist
 /.cache
+/pullapprove-browser-extension.zip
+.DS_Store
