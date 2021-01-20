@@ -1,0 +1,9 @@
+version: 3
+groups:
+  dropseed:
+    reviews:
+      required: 1
+      request: 1
+      author_value: 1
+    reviewers:
+      users: [davegaeddert]
