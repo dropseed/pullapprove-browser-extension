@@ -928,10 +928,10 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
-"@primer/components@^23.0.1":
-  version "23.0.1"
-  resolved "https://registry.yarnpkg.com/@primer/components/-/components-23.0.1.tgz#d38a948426e2eb5816a4e3aa4e232bbbf35ec069"
-  integrity sha512-T/YqFumYANlozDSa6okMyHI2QEGnet4ulw48Cvv9WBPkrSGi5vIcLek5WZUUMooTAtMIuoyhGIcP8fDcWJV3mw==
+"@primer/components@^23.0.2":
+  version "23.0.2"
+  resolved "https://registry.yarnpkg.com/@primer/components/-/components-23.0.2.tgz#73e5d4137feef925c53a044f016fb7872a6f2b57"
+  integrity sha512-1TaPF239BlOl1+J2Txti9O+uS6VuxBnQW3eCre+ElMEcg3fC4v2ZLZxVp3SreqijOAqGG9Y52uMw3a3nRi9BGg==
   dependencies:
     "@primer/octicons-react" "^10.0.0"
     "@primer/primitives" "3.0.0"
@@ -939,8 +939,8 @@
     "@styled-system/prop-types" "5.1.2"
     "@styled-system/props" "5.1.4"
     "@styled-system/theme-get" "5.1.2"
-    "@types/styled-components" "^4.4.0"
-    "@types/styled-system" "5.1.2"
+    "@types/styled-components" "5.1.7"
+    "@types/styled-system" "5.1.10"
     "@types/styled-system__css" "5.0.14"
     "@types/styled-system__theme-get" "5.0.1"
     classnames "^2.2.5"
@@ -1092,13 +1092,6 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
-"@types/react-native@*":
-  version "0.63.45"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.45.tgz#944a471d1e40e22eb8eae4369db7facf697c545e"
-  integrity sha512-HvsHe8hbcAuZJKcqUEN+E/qV1TNjL6venNUiQvDi7d1IlEK6ZyTrpIS937PwiNWc3UePNzR0xZ++aqpMAJqz1A==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react@*":
   version "17.0.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.0.tgz#5af3eb7fad2807092f0046a1302b7823e27919b8"
@@ -1107,22 +1100,21 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
-"@types/styled-components@^4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-4.4.3.tgz#74dd00ad760845a98890a8539361d8afc32059de"
-  integrity sha512-U0udeNOZBfUkJycmGJwmzun0FBt11rZy08weVQmE2xfUNAbX8AGOEWxWna2d+qAUKxKgMlcG+TZT0+K2FfDcnQ==
+"@types/styled-components@5.1.7":
+  version "5.1.7"
+  resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.7.tgz#3cd10b088c1cb1acde2e4b166b3e8275a3083710"
+  integrity sha512-BJzPhFygYspyefAGFZTZ/8lCEY4Tk+Iqktvnko3xmJf9LrLqs3+grxPeU3O0zLl6yjbYBopD0/VikbHgXDbJtA==
   dependencies:
     "@types/hoist-non-react-statics" "*"
     "@types/react" "*"
-    "@types/react-native" "*"
-    csstype "^2.2.0"
+    csstype "^3.0.2"
 
-"@types/styled-system@5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@types/styled-system/-/styled-system-5.1.2.tgz#d75c40bc4a3bb0d0022eb3dcae58854129e9dd32"
-  integrity sha512-Byh33qthYnI6+qS0TRr4vqd+N/ax6ic1NFE6ZA16xuVr/EvYvSB8+diEP1lTSE7sP/MTdQpl+KaONREnyalDUA==
+"@types/styled-system@5.1.10":
+  version "5.1.10"
+  resolved "https://registry.yarnpkg.com/@types/styled-system/-/styled-system-5.1.10.tgz#dcf5690dd837ca49b8de1f23cb99d510c7f4ecb3"
+  integrity sha512-OmVjC9OzyUckAgdavJBc+t5oCJrNXTlzWl9vo2x47leqpX1REq2qJC49SEtzbu1OnWSzcD68Uq3Aj8TeX+Kvtg==
   dependencies:
-    csstype "^2.6.4"
+    csstype "^3.0.2"
 
 "@types/styled-system__css@5.0.14":
   version "5.0.14"
@@ -2100,11 +2092,6 @@ cssstyle@^1.1.1:
   integrity sha512-GBrLZYZ4X4x6/QEoBnIrqb8B/f5l4+8me2dkom/j1Gtbxy0kBv6OGzKuAsGM75bkGwGAFkt56Iwg28S3XTZgSA==
   dependencies:
     cssom "0.3.x"
-
-csstype@^2.2.0, csstype@^2.6.4:
-  version "2.6.14"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.14.tgz#004822a4050345b55ad4dcc00be1d9cf2f4296de"
-  integrity sha512-2mSc+VEpGPblzAxyeR+vZhJKgYg0Og0nnRi7pmRXFYYxSfnOnW8A5wwQb4n4cE2nIOzqKOAzLCaEX6aBmNEv8A==
 
 csstype@^3.0.2:
   version "3.0.6"
