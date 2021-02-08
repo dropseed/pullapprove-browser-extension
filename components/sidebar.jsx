@@ -48,7 +48,7 @@ export default class Sidebar extends React.Component {
   }
 
   findReports(targetNode) {
-    const links = targetNode.querySelectorAll(".status-actions");
+    const links = targetNode.querySelectorAll("a.status-actions"); // There are other details.status-actions too which we don't want
     const reports = {};
     links.forEach((link) => {
       const statusName = link.parentNode.previousElementSibling.children[0].innerText.trim();
