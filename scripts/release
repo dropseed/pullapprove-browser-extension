@@ -17,7 +17,7 @@ echo "Building JS"
 yarn run build
 
 echo "Zipping extension"
-rm pullapprove-browser-extension.zip
+rm -f pullapprove-browser-extension.zip
 zip -r pullapprove-browser-extension.zip dist img LICENSE manifest.json
 
 # TODO upload to chrome?
