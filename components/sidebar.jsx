@@ -12,7 +12,7 @@ export default class Sidebar extends React.Component {
     this.setState({
       currentUsername: getCurrentUsername(),
       observer: this.createObserver(),
-      reports: this.findReports(this.props.mergingNode),
+      reports: this.findReports(),
     });
   }
 
@@ -25,21 +25,14 @@ export default class Sidebar extends React.Component {
   createObserver() {
     const sidebar = this;
     const observerCallback = function (mutationsList, observer) {
-      const firstMutation = mutationsList[0];
-      if (
-        firstMutation.type === "childList" &&
-        firstMutation.addedNodes.length === 1 &&
-        firstMutation.addedNodes[0].id === sidebar.props.mergingNode.id
-      ) {
-        sidebar.setState({
-          reports: sidebar.findReports(firstMutation.addedNodes[0]),
-        });
-      }
+      sidebar.setState({
+        reports: sidebar.findReports(),
+      });
     };
 
     const observer = new MutationObserver(observerCallback);
 
-    observer.observe(this.props.mergingNode.parentNode, {
+    observer.observe(this.props.reportLinksContainer, {
       childList: true,
       subtree: true,
     });
@@ -47,8 +40,10 @@ export default class Sidebar extends React.Component {
     return observer;
   }
 
-  findReports(targetNode) {
-    const links = targetNode.querySelectorAll("a.status-actions"); // There are other details.status-actions too which we don't want
+  findReports() {
+    const links = this.props.reportLinksContainer.querySelectorAll(
+      this.props.reportLinksSelector
+    );
     const reports = {};
     links.forEach((link) => {
       const statusName = link.parentNode.previousElementSibling.children[0].innerText.trim();
