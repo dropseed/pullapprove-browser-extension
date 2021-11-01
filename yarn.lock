@@ -935,13 +935,14 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
-"@primer/components@^30.0.0":
-  version "30.0.0"
-  resolved "https://registry.yarnpkg.com/@primer/components/-/components-30.0.0.tgz#877cd49b548efac089af07f9dd3d2f29d4ce2289"
-  integrity sha512-NS1KYILIcIo4KXAS4hf0N+end2LH1xoH/sYmSEKs3N0ee1dqVwyLKS0/y7jsVyNuUUYNDnkEVWQe0Jakub2e0g==
+"@primer/components@^31.1.0":
+  version "31.1.0"
+  resolved "https://registry.yarnpkg.com/@primer/components/-/components-31.1.0.tgz#743094a564dbd16d7d9055985fa122e2a6e9627c"
+  integrity sha512-7Be9x8xoDG5emKWbJ4Y6QOSxOozsipYTnbZPZsEpXq40X7IgIaS1sKaLAlyLfs7w399VFLfw5iCB80G2WkxfmA==
   dependencies:
     "@primer/octicons-react" "^13.0.0"
-    "@primer/primitives" "4.8.1"
+    "@primer/primitives" "5.1.0"
+    "@radix-ui/react-polymorphic" "0.0.14"
     "@react-aria/ssr" "3.1.0"
     "@styled-system/css" "5.1.5"
     "@styled-system/props" "5.1.5"
@@ -952,6 +953,7 @@
     "@types/styled-system__css" "5.0.16"
     "@types/styled-system__theme-get" "5.0.1"
     classnames "2.3.1"
+    color2k "1.2.4"
     deepmerge "4.2.2"
     focus-visible "5.2.0"
     styled-system "5.1.5"
@@ -966,10 +968,15 @@
   resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-13.0.0.tgz#a7f2288fd9cf9cabc1e75553a0dd9f00d74b68c1"
   integrity sha512-j5XppNRCvgaMZLPsVvvmp6GSh7P5pq6PUbsfLNBWi2Kz3KYDeoGDWbPr5MjoxFOGUn6Hjnt6qjHPRxahd11vLQ==
 
-"@primer/primitives@4.8.1":
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-4.8.1.tgz#05f76e47f67018514fd54b35ca615b9d27ef2a46"
-  integrity sha512-mgr6+EKpn4DixuhLt3drk7QmNQO8M7RYONWovg1nkV7p56jklhDLfZmp1luLUee37eQGAxx3ToStL6gqINFjnQ==
+"@primer/primitives@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-5.1.0.tgz#698ad3a173f3a1d7090651cce0a7088e4b93da39"
+  integrity sha512-pW8DIh6rZV0/R7lxHnVRJ/tdN4kDVSpAtdcCecxKsvtgK5d9haekt3ERpM6i93xKwB5CJYy9ouuC9C0UqWPI0A==
+
+"@radix-ui/react-polymorphic@0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-polymorphic/-/react-polymorphic-0.0.14.tgz#fc6cefee6686db8c5a7ff14c8c1b9b5abdee325b"
+  integrity sha512-9nsMZEDU3LeIUeHJrpkkhZVxu/9Fc7P2g2I3WR+uA9mTbNC3hGaabi0dV6wg0CfHb+m4nSs1pejbE/5no3MJTA==
 
 "@react-aria/ssr@3.1.0":
   version "3.1.0"
@@ -1766,6 +1773,11 @@ color-string@^1.5.4:
   dependencies:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
+
+color2k@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/color2k/-/color2k-1.2.4.tgz#af34950ac58e23cf224a01cb8dd0c9911a79605e"
+  integrity sha512-DiwdBwc0BryPFFXoCrW8XQGXl2rEtMToODybxZjKnN5IJXt/tV/FsN02pCK/b7KcWvJEioz3c74lQSmayFvS4Q==
 
 color@^3.0.0:
   version "3.1.3"
