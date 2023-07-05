@@ -2,6 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Sidebar from "./components/sidebar";
 
+// Set document to the active tab document
+const doc = chrome.tabs.document;
+console.log(doc)
+
 // For PR merge status, need to observe the entire merging partial
 // to be able to watch for DOM changes to it and update the sidebar
 const reportLinksContainer = document.querySelector(

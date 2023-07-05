@@ -1,24 +1,29 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "PullApprove",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "Dropseed",
   "description": "Integrates PullApprove into the GitHub interface",
-  "icons": {
-    "16": "img/icon-16.png",
-    "48": "img/icon-48.png",
-    "128": "img/icon-128.png"
+  "action": {
+    "default_icon": {
+      "16": "img/icon-16.png",
+      "48": "img/icon-48.png",
+      "128": "img/icon-128.png"
+    },
+    "default_title": "Click to open panel"
   },
-  "incognito": "split",
-  "homepage_url": "https://www.pullapprove.com/",
-  "content_scripts": [
-    {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "dist/content.js"
-      ]
-    }
-  ]
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "sidePanel",
+    "tabs",
+    "activeTab",
+    "declarativeContent",
+    "scripting"
+  ],
+  "side_panel": {
+    "default_path": "side_panel.html"
+  },
+  "homepage_url": "https://www.pullapprove.com/"
 }
