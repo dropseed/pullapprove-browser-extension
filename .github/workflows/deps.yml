@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         token: ${{ steps.generate_token.outputs.token }}
-    - run: yarn install
+    - run: npm install
     - run: curl https://deps.app/install.sh | bash -s -- -b $HOME/bin
     - run: $HOME/bin/deps ci
       env:
