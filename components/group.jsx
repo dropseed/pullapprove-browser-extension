@@ -1,49 +1,94 @@
 import React from "react";
-import { Flex, Box, Text, StyledOcticon, Avatar } from "@primer/components";
-import { CheckIcon, DotFillIcon, XIcon } from "@primer/octicons-react";
 
-const SuccessIcon = (props) => (
-  <StyledOcticon icon={CheckIcon} color="state.success" size={props.size} />
+const SuccessIcon = () => (
+  <span style={{ color: "green", fontSize: "1.5em" }}>
+    <svg
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+    >
+      <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+    </svg>
+  </span>
 );
-const PendingIcon = (props) => (
-  <StyledOcticon icon={DotFillIcon} color="state.pending" size={props.size} />
+const PendingIcon = () => (
+  <span style={{ color: "orange", fontSize: "1.5em" }}>
+    <svg
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+    >
+      <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"></path>
+    </svg>
+  </span>
 );
-const RejectedIcon = (props) => (
-  <StyledOcticon icon={XIcon} color="state.failure" size={props.size} />
+const RejectedIcon = () => (
+  <span style={{ color: "red", fontSize: "1.5em" }}>
+    <svg
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+    >
+      <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+  </span>
 );
 
 const User = (props) => (
-  <Flex alignContent="center" justifyContent="space-between" mt={2}>
-    <Flex alignContent="center">
-      <Avatar
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: "8px",
+    }}
+  >
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <img
         src={`${window.location.origin}/${props.username}.png`}
-        size={20}
+        alt={props.username}
+        style={{ width: "20px", height: "20px", borderRadius: "50%" }}
       />
-      <Text
-        ml={1}
-        fontWeight={props.username === props.currentUsername ? "bold" : ""}
+      <span
+        style={{
+          marginLeft: "4px",
+          fontWeight:
+            props.username === props.currentUsername ? "bold" : "normal",
+        }}
       >
         {props.username}
-      </Text>
-    </Flex>
+      </span>
+    </div>
     {props.icon}
-  </Flex>
+  </div>
 );
 
 export default class Group extends React.Component {
   render() {
     const { name, data, currentUsername } = this.props;
     return (
-      <Box mb="3">
-        <Flex alignContent="center" justifyContent="space-between">
-          <code className="text-bold">{name}</code>
-          <div>
-            <Text mr={1}>
+      <div style={{ marginBottom: "24px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <code style={{ fontWeight: "bold" }}>{name}</code>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span style={{ marginRight: "8px" }}>
               {data.score}/{data.required}
-            </Text>
+            </span>
             {data.is_passing ? <SuccessIcon /> : <PendingIcon />}
           </div>
-        </Flex>
+        </div>
         {data.users_approved.map((username) => (
           <User
             key={username}
@@ -68,7 +113,7 @@ export default class Group extends React.Component {
             icon={<RejectedIcon />}
           />
         ))}
-      </Box>
+      </div>
     );
   }
 }

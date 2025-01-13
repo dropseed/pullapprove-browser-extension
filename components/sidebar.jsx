@@ -46,7 +46,8 @@ export default class Sidebar extends React.Component {
     );
     const reports = {};
     links.forEach((link) => {
-      const statusName = link.parentNode.previousElementSibling.children[0].innerText.trim();
+      const statusName =
+        link.parentNode.previousElementSibling.children[0].innerText.trim();
       if (
         statusName.toLowerCase().indexOf("pullapprove") !== -1 &&
         getURLParameterByName(link.href, "url") !== null

@@ -3,3 +3,4 @@
 /.cache
 /pullapprove-browser-extension.zip
 .DS_Store
+.parcel-cache

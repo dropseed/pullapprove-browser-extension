@@ -1,5 +1,4 @@
 import React from "react";
-import { BaseStyles, Flex } from "@primer/components";
 import Status from "./status";
 import Group from "./group";
 import { getURLParameterByName } from "./utils";
@@ -62,12 +61,15 @@ export default class SidebarReport extends React.Component {
     }
 
     return (
-      <BaseStyles>
+      <div>
         <div className="discussion-sidebar-item">
-          <Flex
-            alignItems="center"
-            justifyContent="space-between"
+          <div
             className="discussion-sidebar-heading"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
             <div className="text-bold">
               {name === "pullapprove" ? "PullApprove" : name}
@@ -77,13 +79,13 @@ export default class SidebarReport extends React.Component {
                 View report
               </a>
             ) : null}
-          </Flex>
+          </div>
           {statusNode}
           {groupNodes.length > 0 ? groupNodes : null}
         </div>
         {/* Dumb visual hack to get the divider styling as if it were next to the other sidebar items */}
         <div className="discussion-sidebar-item"></div>
-      </BaseStyles>
+      </div>
     );
   }
 }
