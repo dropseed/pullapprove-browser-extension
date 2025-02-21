@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PullApprove",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "Dropseed",
   "description": "Integrates PullApprove into the GitHub interface",
   "icons": {
