@@ -41,10 +41,11 @@ export default class Sidebar extends React.Component {
   }
 
   findReports() {
-    const links = this.props.reportLinksContainer.querySelectorAll(
-      this.props.reportLinksSelector
-    );
     const reports = {};
+
+    // Original merge experience style links
+    const links =
+      this.props.reportLinksContainer.querySelectorAll("a.status-actions");
     links.forEach((link) => {
       const statusName =
         link.parentNode.previousElementSibling.children[0].innerText.trim();
@@ -55,6 +56,19 @@ export default class Sidebar extends React.Component {
         reports[statusName] = link.href;
       }
     });
+
+    // New merge experience style links
+    const newLinks = this.props.reportLinksContainer.querySelectorAll("a");
+    newLinks.forEach((link) => {
+      const statusName = link.innerText.trim();
+      if (
+        statusName.toLowerCase().indexOf("pullapprove") !== -1 &&
+        getURLParameterByName(link.href, "url") !== null
+      ) {
+        reports[statusName] = link.href;
+      }
+    });
+
     return reports;
   }
 
