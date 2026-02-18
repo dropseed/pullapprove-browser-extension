@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Sidebar from "./components/sidebar";
 
-// For PR merge status, need to observe the entire merging partial
-// to be able to watch for DOM changes to it and update the sidebar
+// GitHub redesigned the PR checks UI -- status check links moved outside
+// .discussion-timeline-actions into a new React-based component tree.
+// Use the broader .pull-discussion-timeline container which contains both.
 const reportLinksContainer = document.querySelector(
-  ".discussion-timeline-actions"
+  ".pull-discussion-timeline"
 );
 
 if (reportLinksContainer) {
