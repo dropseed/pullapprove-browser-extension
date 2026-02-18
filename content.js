@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import Sidebar from "./components/sidebar";
 
 // GitHub redesigned the PR checks UI -- status check links moved outside
@@ -13,8 +13,7 @@ if (reportLinksContainer) {
   const pullapproveSidebarContainer = document.createElement("div");
   const githubSidebar = document.querySelector("#partial-discussion-sidebar");
   githubSidebar.parentNode.prepend(pullapproveSidebarContainer);
-  ReactDOM.render(
-    <Sidebar reportLinksContainer={reportLinksContainer} />,
-    pullapproveSidebarContainer
+  createRoot(pullapproveSidebarContainer).render(
+    <Sidebar reportLinksContainer={reportLinksContainer} />
   );
 }
