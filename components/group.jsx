@@ -51,7 +51,10 @@ const User = (props) => (
   >
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
-        src={`${window.location.origin}/${props.username.replace(/\[bot\]$/, "")}.png`}
+        src={`${window.location.origin}/${props.username.replace(
+          /\[bot\]$/,
+          ""
+        )}.png`}
         alt={props.username}
         style={{ width: "20px", height: "20px", borderRadius: "50%" }}
       />
