@@ -19,22 +19,39 @@ export default class SidebarReport extends React.Component {
   }
 
   loadReportData() {
-    const jsonURL = getURLParameterByName(this.props.reportURL, "url");
+    const reportURL = this.props.reportURL;
+    const jsonURL = getURLParameterByName(reportURL, "url");
+    this.setState({ reportData: null, loadError: null });
     fetch(jsonURL)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Report returned HTTP ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
-        this.setState({
-          reportData: data,
-        });
+        // Ignore a response for a report we've since moved on from.
+        if (this.props.reportURL === reportURL) {
+          this.setState({ reportData: data });
+        }
+      })
+      .catch((error) => {
+        // Report links are signed and expire, so an old PR's report comes
+        // back as an XML error body instead of JSON.
+        if (this.props.reportURL === reportURL) {
+          this.setState({ loadError: error });
+        }
       });
   }
 
   render() {
-    const { reportData } = this.state;
+    const { reportData, loadError } = this.state;
     const { reportURL, currentUsername, name } = this.props;
 
     let statusNode = <Status state="pending" explanation="Loading..." />;
-    if (reportData?.status?.state) {
+    if (loadError) {
+      statusNode = <Status state="error" explanation="Couldn't load report." />;
+    } else if (reportData?.status?.state) {
       statusNode = (
         <Status
           state={reportData.status.state}

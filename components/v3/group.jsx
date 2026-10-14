@@ -92,7 +92,7 @@ export default class Group extends React.Component {
             {data.is_passing ? <SuccessIcon /> : <PendingIcon />}
           </div>
         </div>
-        {data.users_approved.map((username) => (
+        {(data.users_approved || []).map((username) => (
           <User
             key={username}
             currentUsername={currentUsername}
@@ -100,7 +100,7 @@ export default class Group extends React.Component {
             icon={<SuccessIcon />}
           />
         ))}
-        {data.users_pending.map((username) => (
+        {(data.users_pending || []).map((username) => (
           <User
             key={username}
             currentUsername={currentUsername}
@@ -108,7 +108,7 @@ export default class Group extends React.Component {
             icon={<PendingIcon />}
           />
         ))}
-        {data.users_rejected.map((username) => (
+        {(data.users_rejected || []).map((username) => (
           <User
             key={username}
             currentUsername={currentUsername}

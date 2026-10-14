@@ -7,6 +7,7 @@ export function getURLParameterByName(url, name) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+// Empty when logged out (GitHub omits the meta tag), so nothing reads as "you".
 export function getCurrentUsername() {
-  return document.querySelector("meta[name='user-login']").content;
+  return document.querySelector("meta[name='user-login']")?.content || "";
 }

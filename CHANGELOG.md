@@ -9,14 +9,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing right now.
 
-## [0.1.1] - 2020-01-21
+## [0.4.0] - 2026-10-14
+
+- PullApprove 5 support. On a pull request's Conversation tab the sidebar shows the review status, your next step, and your scopes, with a link to the pull request on PullApprove. On the Files changed tab, files in your scopes are marked, and an "All / Mine" toggle under the file filter hides everything else. Requires being logged in to PullApprove in the same browser.
+- Adds a host permission for `5.pullapprove.com`, which the extension's background worker uses to ask PullApprove about the pull request with your session.
+- PullApprove v3 report summaries still render as before (`components/v3`); the v5 code is separate (`components/v5`). An expired v3 report now says so instead of loading forever.
+
+## [0.3.1] - 2026-02-18
+
+- Fix for GitHub's new pull request checks UI.
+- Fix avatar URLs for bot users.
+- React 19.
+
+## [0.3.0] - 2025-02-21
+
+- Support for GitHub's new merge experience status box.
+
+## [0.2.1] - 2025-01-13
+
+- Remove the Primer dependency.
+
+## [0.2.0] - 2025-01-13
+
+- Manifest V3.
+
+## [0.1.2] - 2021-05-23
+
+- Observe the merge area for status changes instead of a removed GitHub element.
+
+## [0.1.1] - 2021-01-21
 
 Fix bug with PRs where "changes requested" panel is present.
 
-## [0.1.0] - 2020-01-20
+## [0.1.0] - 2021-01-20
 
 First release!
 
-[Unreleased]: https://github.com/dropseed/pullapprove-browser-extension/compare/0.1.1...HEAD
-[0.1.1]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/0.1.1
-[0.1.0]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/0.1.0
+[Unreleased]: https://github.com/dropseed/pullapprove-browser-extension/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.4.0
+[0.3.1]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.3.1
+[0.3.0]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.3.0
+[0.2.1]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.2.1
+[0.2.0]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.2.0
+[0.1.2]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.1.2
+[0.1.1]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.1.1
+[0.1.0]: https://github.com/dropseed/pullapprove-browser-extension/releases/tag/v0.1.0

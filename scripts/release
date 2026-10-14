@@ -18,10 +18,21 @@ npm run build
 
 echo "Zipping extension"
 rm -f pullapprove-browser-extension.zip
-zip -r pullapprove-browser-extension.zip dist img LICENSE manifest.json
-
-# TODO upload to chrome?
+zip -r pullapprove-browser-extension.zip dist img LICENSE manifest.json background.js
 
 git push && git push --tags
 
 gh release create "v$VERSION" pullapprove-browser-extension.zip
+
+# The Chrome Web Store upload is manual: the dashboard needs a signed-in
+# Google account and a file picker.
+cat <<MSG
+
+Released v$VERSION on GitHub. To publish it to the Chrome Web Store:
+
+  1. Open https://chrome.google.com/webstore/devconsole and pick PullApprove.
+  2. Package > Upload new package > pullapprove-browser-extension.zip
+  3. Update the listing text and screenshots if this version changed the UI.
+  4. Submit for review. A version that adds permissions gets a manual review.
+
+MSG

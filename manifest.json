@@ -11,6 +11,12 @@
   },
   "incognito": "split",
   "homepage_url": "https://www.pullapprove.com/",
+  "host_permissions": [
+    "https://5.pullapprove.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [

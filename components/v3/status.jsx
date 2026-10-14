@@ -11,6 +11,7 @@ const flashClass = {
 export default class Status extends React.Component {
   render() {
     const { state, explanation } = this.props;
-    return <div className={`${flashClass[state]} p-2 mb-3`}>{explanation}</div>;
+    const className = flashClass[state] || "flash";
+    return <div className={`${className} p-2 mb-3`}>{explanation}</div>;
   }
 }
