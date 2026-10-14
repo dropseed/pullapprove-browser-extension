@@ -18,7 +18,7 @@ npm run build
 
 echo "Zipping extension"
 rm -f pullapprove-browser-extension.zip
-zip -r pullapprove-browser-extension.zip dist img LICENSE manifest.json
+zip -r pullapprove-browser-extension.zip dist img LICENSE manifest.json background.js ownership.js
 
 # TODO upload to chrome?
 

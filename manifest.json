@@ -3,7 +3,12 @@
   "name": "PullApprove",
   "version": "0.3.1",
   "author": "Dropseed",
-  "description": "Integrates PullApprove into the GitHub interface",
+  "description": "Integrates PullApprove into GitHub with owned-file filtering",
+  "host_permissions": ["https://5.pullapprove.com/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
   "icons": {
     "16": "img/icon-16.png",
     "48": "img/icon-48.png",
@@ -13,12 +18,8 @@
   "homepage_url": "https://www.pullapprove.com/",
   "content_scripts": [
     {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "dist/content.js"
-      ]
+      "matches": ["https://github.com/*"],
+      "js": ["dist/content.js"]
     }
   ]
 }

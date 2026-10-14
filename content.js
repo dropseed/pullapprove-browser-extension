@@ -1,6 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import Sidebar from "./components/sidebar";
+import { startOwnedFiles } from "./owned-files";
+
+startOwnedFiles(document, window.location, (request) =>
+  chrome.runtime.sendMessage(request)
+);
 
 // GitHub redesigned the PR checks UI -- status check links moved outside
 // .discussion-timeline-actions into a new React-based component tree.
@@ -9,9 +14,9 @@ const reportLinksContainer = document.querySelector(
   ".pull-discussion-timeline"
 );
 
-if (reportLinksContainer) {
+const githubSidebar = document.querySelector("#partial-discussion-sidebar");
+if (reportLinksContainer && githubSidebar?.parentNode) {
   const pullapproveSidebarContainer = document.createElement("div");
-  const githubSidebar = document.querySelector("#partial-discussion-sidebar");
   githubSidebar.parentNode.prepend(pullapproveSidebarContainer);
   createRoot(pullapproveSidebarContainer).render(
     <Sidebar reportLinksContainer={reportLinksContainer} />
