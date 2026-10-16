@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing right now.
 
+## [0.4.1] - 2026-10-15
+
+- The PullApprove 5 sidebar and the Files changed marks now update without a page reload. They refresh when GitHub shows the pull request changing state (draft, ready, merged, closed) or PullApprove posting a new status, and when you come back to a tab that's been sitting open. Previously a pull request marked ready for review kept showing "Draft" until the page was refreshed.
+
 ## [0.4.0] - 2026-10-14
 
 - PullApprove 5 support. On a pull request's Conversation tab the sidebar shows the review status, your next step, and your scopes, with a link to the pull request on PullApprove. On the Files changed tab, files in your scopes are marked, and an "All / Mine" toggle under the file filter hides everything else. Requires being logged in to PullApprove in the same browser.
