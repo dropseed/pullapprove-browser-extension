@@ -3,39 +3,37 @@ import Panel from "./panel";
 import FilesTab from "./files-tab";
 import { fetchPullRequest } from "./utils";
 import { mountAboveSidebar } from "../page";
-import { pullRequestSignals } from "../github";
+import { pullRequestStateLabel } from "../github";
 
 // PullApprove 5: the PR is looked up on PullApprove by org/repo/number (via
 // the service worker, with the viewer's PullApprove session), then rendered
 // as a sidebar panel and, on the files tab, as marks on your files plus an
 // "only files in my scopes" filter.
 //
-// The lookup is repeated when the page shows the PR changed (GitHub's state
-// label or PullApprove's status row, both updated live) and when the tab
-// comes back into view, and whatever came back last is rendered. There is
-// no polling, and a hidden tab doesn't refetch: an open tab nobody is
-// looking at costs nothing.
+// PullApprove is the one that knows when its answer changes, so while the tab
+// is visible the lookup is repeated every POLL_MS, and whatever came back last
+// is rendered. A hidden tab doesn't poll (an open tab nobody is looking at
+// costs nothing) and catches up within a second of being looked at again.
+// The one change worth not waiting for is GitHub's state label (draft, ready,
+// merged, closed), which refetches right away.
 
 const SIDEBAR_ID = "pullapprove-v5-sidebar";
 
-// Coming back to a tab refetches only if the last fetch is older than this,
-// so flipping between windows doesn't fetch on every flip.
-const REFRESH_ON_FOCUS_AFTER_MS = 10 * 1000;
+// How stale a visible tab's answer may get before it's fetched again.
+const POLL_MS = 15 * 1000;
 
 // How long after GitHub's state label changes to fetch again, by which point
 // PullApprove has usually processed the webhook (a few seconds in practice).
 const REFETCH_AFTER_STATE_CHANGE_MS = 6 * 1000;
 
-// One PR at a time: its latest fetch, the last value each page signal
-// showed, the sidebar React root, the files tab UI, and which fetch they're
-// showing.
+// One PR at a time: its latest fetch, the last state label shown, the
+// sidebar React root, the files tab UI, and which fetch they're showing.
 const EMPTY = {
   key: null,
   page: null,
   promise: null,
   fetchedAt: 0,
   lastState: "",
-  lastStatuses: "",
   root: null,
   filesTab: null,
   renderedPromise: null,
@@ -57,26 +55,24 @@ export async function mountV5(page) {
     current.key = key;
   }
   current.page = page;
-  const changed = signalsChanged();
+  const stateChanged = stateLabelChanged();
   if (!current.promise) {
     fetchLatest();
-  } else if (changed.statuses && !document.hidden) {
-    // PullApprove posted a new status, so its answer is already new.
-    fetchLatest();
-  } else if (changed.state && !document.hidden) {
+  } else if (document.hidden) {
+    // Nobody is looking; the poll below catches up once somebody is.
+  } else if (stateChanged) {
     // GitHub shows the change before PullApprove has processed it. Fetch now
     // for the parts that don't wait on PullApprove, and again once it has
-    // likely caught up: the status rows that would otherwise say so only
-    // exist on the Conversation tab.
+    // likely caught up, rather than waiting out the poll.
     fetchLatest();
     setTimeout(() => {
       if (current.key === key) {
         fetchLatest();
       }
     }, REFETCH_AFTER_STATE_CHANGE_MS);
+  } else if (Date.now() - current.fetchedAt > POLL_MS) {
+    fetchLatest();
   }
-  // A hidden tab skips these refetches; refreshV5 catches it up when it's
-  // looked at again.
 
   const promise = current.promise;
   const response = await promise;
@@ -105,16 +101,6 @@ export async function mountV5(page) {
   renderFilesTab(current.page, response);
 }
 
-// The tab came back into view: refetch if what's showing may be stale.
-export function refreshV5() {
-  if (
-    current.key &&
-    Date.now() - current.fetchedAt > REFRESH_ON_FOCUS_AFTER_MS
-  ) {
-    fetchLatest();
-  }
-}
-
 // A refetch that fails for a passing reason (a laptop waking up, a
 // PullApprove deploy) keeps showing the last answer rather than blanking it.
 function fetchLatest() {
@@ -129,23 +115,16 @@ function fetchLatest() {
   });
 }
 
-// A signal counts as changed only when it goes from one shown value to
-// another. Appearing (GitHub renders the merge box after the header) or
-// disappearing (another tab, collapsed checks) isn't a change, so the last
-// value shown is what the next one is compared to.
-function signalsChanged() {
-  const { state, statuses } = pullRequestSignals();
-  const changed = {
-    state: differs(current.lastState, state),
-    statuses: differs(current.lastStatuses, statuses),
-  };
+// The label counts as changed only when it goes from one shown value to
+// another. Appearing or disappearing while GitHub renders isn't a change, so
+// the last value shown is what the next one is compared to.
+function stateLabelChanged() {
+  const state = pullRequestStateLabel();
+  const changed = Boolean(
+    current.lastState && state && current.lastState !== state
+  );
   current.lastState = state || current.lastState;
-  current.lastStatuses = statuses || current.lastStatuses;
   return changed;
-}
-
-function differs(last, now) {
-  return Boolean(last && now && last !== now);
 }
 
 function renderSidebar(response) {

@@ -33,14 +33,8 @@ export const SELECTORS = {
   // anchor as the diff container. Missing: no tree marks.
   treeFileLinks: "[role='treeitem'] a[href^='#diff-']",
   // PR header, every tab. The Open/Draft/Merged/Closed label, a hashed class
-  // with a stable prefix. Missing: no refetch when the PR changes state.
+  // with a stable prefix. Missing: a state change waits for the next poll.
   stateLabel: "[class*='StateLabel-StateLabel']",
-  // Conversation tab, merge box. A status row per context, labelled with the
-  // context name; its text carries the description. Every PullApprove
-  // instance posts one (`pullapprove5`, `pullapprove5-<name>` self-hosted).
-  // Absent while the checks list is collapsed. Missing: no refetch when
-  // PullApprove posts a new status.
-  pullapproveStatuses: "li[aria-label^='pullapprove' i]",
   // The JSON the React files view is bootstrapped from on a full page load.
   // Read-only: a partial-view check, with a URL fallback.
   embeddedData: 'script[data-target="react-app.embeddedData"]',
@@ -118,18 +112,10 @@ function embeddedChangesRoute() {
   }
 }
 
-// What the page currently says about the PR's review state: GitHub's state
-// label, and the text of PullApprove's status rows. GitHub updates both live,
-// so a change in either means PullApprove's answer may have changed too.
-// Either part is "" when it isn't rendered (another tab, collapsed checks).
-export function pullRequestSignals() {
-  return {
-    state:
-      document.querySelector(SELECTORS.stateLabel)?.textContent.trim() || "",
-    statuses: [...document.querySelectorAll(SELECTORS.pullapproveStatuses)]
-      .map((row) => row.textContent.trim())
-      .join("\n"),
-  };
+// GitHub's Open/Draft/Merged/Closed label, which it updates live; "" while
+// it isn't rendered.
+export function pullRequestStateLabel() {
+  return document.querySelector(SELECTORS.stateLabel)?.textContent.trim() || "";
 }
 
 // GitHub anchors a file's diff (and its tree row) as `#diff-<digest>`, where

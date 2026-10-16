@@ -1,6 +1,6 @@
 import { parsePullRequestPage } from "./components/page";
 import { mountV3, unmountV3 } from "./components/v3";
-import { mountV5, refreshV5, unmountV5 } from "./components/v5";
+import { mountV5, unmountV5 } from "./components/v5";
 
 // Both generations run side by side: a PR reviewed by PullApprove v3 has
 // report links on the page for the v3 sidebar, and a PR on PullApprove 5 is
@@ -21,14 +21,6 @@ sync();
 document.addEventListener("turbo:load", sync);
 window.addEventListener("popstate", sync);
 // The catch-all: the files tab routes client-side without either event above,
-// and GitHub sometimes swaps the sidebar out on the same URL.
+// and GitHub sometimes swaps the sidebar out on the same URL. It's also what
+// drives v5's poll.
 setInterval(sync, 1000);
-
-// Coming back to a tab that's been sitting open: its PullApprove data may be
-// stale. (Only v5 fetches live data; v3 reads report links off the page.)
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    refreshV5();
-  }
-});
-window.addEventListener("focus", refreshV5);
