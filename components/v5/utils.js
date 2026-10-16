@@ -12,9 +12,17 @@ export async function fetchPullRequest({ org, repo, number }) {
   const url = `${BASE_URL}/extension/v1/gh/${encodeURIComponent(
     org
   )}/${encodeURIComponent(repo)}/pulls/${number}/`;
-  const response = await chrome.runtime.sendMessage({
-    type: "fetchPullRequest",
-    url,
-  });
+  let response;
+  try {
+    response = await chrome.runtime.sendMessage({
+      type: "fetchPullRequest",
+      url,
+    });
+  } catch (error) {
+    // The service worker went away mid-request, or the extension was updated
+    // under this page ("Extension context invalidated"). Same as a network
+    // failure.
+    response = { status: 0, json: false, data: null, error: String(error) };
+  }
   return { ...response, baseUrl: BASE_URL };
 }

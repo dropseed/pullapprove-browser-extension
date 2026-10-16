@@ -55,6 +55,12 @@ export default class FilesTab {
 
     this.hiddenAny = false;
     this.scheduled = false;
+    // Diffs are matched by digest, which is computed async; until then no
+    // diff can be told apart, so none is hidden.
+    this.digestsReady = false;
+    // Set by remove(), so a pending frame or digest callback doesn't put the
+    // UI back after it's gone.
+    this.removed = false;
     this.observer = new MutationObserver(() => this.scheduleApply());
     this.observer.observe(document.body, { childList: true, subtree: true });
     this.scheduleApply();
@@ -62,11 +68,13 @@ export default class FilesTab {
       mine.map(async (file) => [await diffDigest(file.path), file])
     ).then((entries) => {
       this.myFiles = new Map(entries);
+      this.digestsReady = true;
       this.scheduleApply();
     });
   }
 
   remove() {
+    this.removed = true;
     this.observer.disconnect();
     this.unhideAll();
     document.querySelectorAll(`.${ROW_CLASS}`).forEach((el) => el.remove());
@@ -74,13 +82,15 @@ export default class FilesTab {
   }
 
   scheduleApply() {
-    if (this.scheduled) {
+    if (this.scheduled || this.removed) {
       return;
     }
     this.scheduled = true;
     requestAnimationFrame(() => {
       this.scheduled = false;
-      this.apply();
+      if (!this.removed) {
+        this.apply();
+      }
     });
   }
 
@@ -273,7 +283,10 @@ export default class FilesTab {
     }
 
     // The hideable unit is the entry wrapping each diff-<digest> container.
-    document.querySelectorAll(SELECTORS.diffContainers).forEach((diff) => {
+    const diffs = this.digestsReady
+      ? document.querySelectorAll(SELECTORS.diffContainers)
+      : [];
+    diffs.forEach((diff) => {
       const digest = diffContainerDigest(diff);
       if (digest && diff.parentElement) {
         this.setHidden(diff.parentElement, this.myFiles.has(digest));

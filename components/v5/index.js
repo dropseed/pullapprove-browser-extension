@@ -13,13 +13,18 @@ import { pullRequestSignals } from "../github";
 // The lookup is repeated when the page shows the PR changed (GitHub's state
 // label or PullApprove's status row, both updated live) and when the tab
 // comes back into view, and whatever came back last is rendered. There is
-// no timer: an open tab nobody is looking at costs nothing.
+// no polling, and a hidden tab doesn't refetch: an open tab nobody is
+// looking at costs nothing.
 
 const SIDEBAR_ID = "pullapprove-v5-sidebar";
 
 // Coming back to a tab refetches only if the last fetch is older than this,
 // so flipping between windows doesn't fetch on every flip.
 const REFRESH_ON_FOCUS_AFTER_MS = 10 * 1000;
+
+// How long after GitHub's state label changes to fetch again, by which point
+// PullApprove has usually processed the webhook (a few seconds in practice).
+const REFETCH_AFTER_STATE_CHANGE_MS = 6 * 1000;
 
 // One PR at a time: its latest fetch, the last value each page signal
 // showed, the sidebar React root, the files tab UI, and which fetch they're
@@ -53,9 +58,25 @@ export async function mountV5(page) {
   }
   current.page = page;
   const changed = signalsChanged();
-  if (!current.promise || changed) {
+  if (!current.promise) {
     fetchLatest();
+  } else if (changed.statuses && !document.hidden) {
+    // PullApprove posted a new status, so its answer is already new.
+    fetchLatest();
+  } else if (changed.state && !document.hidden) {
+    // GitHub shows the change before PullApprove has processed it. Fetch now
+    // for the parts that don't wait on PullApprove, and again once it has
+    // likely caught up: the status rows that would otherwise say so only
+    // exist on the Conversation tab.
+    fetchLatest();
+    setTimeout(() => {
+      if (current.key === key) {
+        fetchLatest();
+      }
+    }, REFETCH_AFTER_STATE_CHANGE_MS);
   }
+  // A hidden tab skips these refetches; refreshV5 catches it up when it's
+  // looked at again.
 
   const promise = current.promise;
   const response = await promise;
@@ -80,7 +101,8 @@ export async function mountV5(page) {
     }
   }
   renderSidebar(response);
-  renderFilesTab(page, response);
+  // current.page, not `page`: the tab may have changed during the fetch.
+  renderFilesTab(current.page, response);
 }
 
 // The tab came back into view: refetch if what's showing may be stale.
@@ -93,13 +115,14 @@ export function refreshV5() {
   }
 }
 
-// A refetch that can't reach PullApprove (a laptop waking up, say) keeps
-// showing the last answer rather than blanking it.
+// A refetch that fails for a passing reason (a laptop waking up, a
+// PullApprove deploy) keeps showing the last answer rather than blanking it.
 function fetchLatest() {
   const previous = current.promise;
   current.fetchedAt = Date.now();
   current.promise = fetchPullRequest(current.page).then((response) => {
-    if (response.status === 0 && previous) {
+    const transient = response.status === 0 || response.status >= 500;
+    if (transient && previous) {
       return previous;
     }
     return response;
@@ -112,9 +135,10 @@ function fetchLatest() {
 // value shown is what the next one is compared to.
 function signalsChanged() {
   const { state, statuses } = pullRequestSignals();
-  const changed =
-    differs(current.lastState, state) ||
-    differs(current.lastStatuses, statuses);
+  const changed = {
+    state: differs(current.lastState, state),
+    statuses: differs(current.lastStatuses, statuses),
+  };
   current.lastState = state || current.lastState;
   current.lastStatuses = statuses || current.lastStatuses;
   return changed;
