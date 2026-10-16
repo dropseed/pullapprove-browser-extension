@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing right now.
 
+## [0.4.2] - 2026-10-15
+
+- The PullApprove 5 sidebar and Files changed marks now stay current without a page reload. While a pull request's tab is visible the extension checks PullApprove every 15 seconds, so reviews, approvals, and next steps show up on their own; a tab you aren't looking at makes no requests and catches up within a second of being looked at again. Marking a pull request ready for review, back to draft, merged, or closed is picked up right away.
+- A PullApprove deploy or a dropped connection no longer blanks the sidebar or the Files changed marks; the last answer stays up until a new one arrives.
+
 ## [0.4.1] - 2026-10-15
 
 - The PullApprove 5 sidebar and the Files changed marks now update without a page reload. They refresh when GitHub shows the pull request changing state (draft, ready, merged, closed) or PullApprove posting a new status, and when you come back to a tab that's been sitting open. Previously a pull request marked ready for review kept showing "Draft" until the page was refreshed.
