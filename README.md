@@ -36,3 +36,16 @@ when `dist/content.js` changes, so after a rebuild just refresh the GitHub tab
 (twice: the first request is what notices the new build). That only watches
 `dist/content.js`: after changing `connect.js`, reload the extension from
 `chrome://extensions` yourself.
+
+In Firefox, open `about:debugging#/runtime/this-firefox`, click **Load
+Temporary Add-on…**, and pick `manifest.json`. Firefox runs `background.js`
+as a background script rather than a service worker (the manifest declares
+both), and the add-on is gone when Firefox quits. `npx web-ext lint` checks
+the manifest against what Firefox and AMO accept.
+
+Safari needs a wrapper app built with `xcrun safari-web-extension-converter`
+from this directory. Build it with the Release configuration: a Debug build
+splits the extension into a stub plus a debug dylib that an ad-hoc signed,
+sandboxed extension can't load, and Safari then silently hides it. The app
+and its extension must both be sandboxed, and Safari must have **Allow
+unsigned extensions** turned on (it resets every launch).

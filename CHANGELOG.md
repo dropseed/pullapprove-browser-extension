@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The extension now authenticates with its own token for each browser instead of your PullApprove session cookie. You set it up once: the sidebar on a pull request asks you to connect, which opens PullApprove's connect page, and one click there connects that browser. This fixes Safari, where the session cookie never reached PullApprove.
 - Adds the `storage` permission, which the extension uses to keep that token.
 - To disconnect a browser, go to your account page on PullApprove. A token also expires after 30 days without being used, and the sidebar asks you to connect again.
+- Runs in Firefox: the background script is declared the way Firefox needs it, and the manifest carries a Firefox add-on id and data collection declaration (the token it sends to PullApprove, and which pull requests you view).
 
 ## [0.4.2] - 2026-10-15
 
