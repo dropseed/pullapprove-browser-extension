@@ -1,11 +1,17 @@
-// Runs on PullApprove's extension connect page. After "Connect this browser",
-// the page carries a token for this browser in data-token; this takes it off
-// the page, hands it to the service worker to keep, and shows that it worked.
-// Before the form is submitted there's no token and nothing to do.
+// Runs on PullApprove's extension connect page. Marking the page tells it the
+// extension is running here (otherwise it warns, after a moment, that the
+// extension isn't installed or isn't allowed on this site). After "Connect
+// this browser", the page carries a token for this browser in data-token;
+// this takes it off the page, hands it to the service worker to keep, and
+// shows that it worked.
 //
 // This file imports nothing, so Parcel builds it on its own with no chunk
 // shared with content.js.
 const el = document.getElementById("pullapprove-extension-connect");
+
+if (el) {
+  el.dataset.extension = "ready";
+}
 
 if (el && el.dataset.token) {
   const token = el.dataset.token;

@@ -9,7 +9,6 @@
     "48": "img/icon-48.png",
     "128": "img/icon-128.png"
   },
-  "incognito": "split",
   "homepage_url": "https://www.pullapprove.com/",
   "permissions": ["storage"],
   "host_permissions": ["https://5.pullapprove.com/*"],
