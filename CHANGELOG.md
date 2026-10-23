@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.0] - 2026-10-23
 
 - The extension now authenticates with its own token for each browser instead of your PullApprove session cookie. You set it up once: the sidebar on a pull request asks you to connect, which opens PullApprove's connect page, and one click there connects that browser. This fixes Safari, where the session cookie never reached PullApprove.
 - Adds the `storage` permission, which the extension uses to keep that token.
