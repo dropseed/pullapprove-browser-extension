@@ -46,6 +46,29 @@ AMO requires. Chrome warns about those keys, which is why they aren't in
 add-on is gone when Firefox quits. `npx web-ext lint --source-dir
 build/firefox` checks it against what Firefox and AMO accept.
 
+### Reproducible build
+
+The release zips are built from this repository with Node and npm only; no
+other tools are needed. Any operating system that runs Node works (releases
+are built on macOS).
+
+1. Install Node v24.21.0 and npm 11.19.0, for example from
+   https://nodejs.org/ or with `fnm install 24.21.0` / `nvm install 24.21.0`.
+2. In this directory: `npm install` (installs Parcel 2, which bundles the
+   React components; versions are pinned by `package-lock.json`).
+3. `./scripts/build-firefox`
+
+Step 3 runs `npm run build` (`parcel build content.js connect.js --no-cache
+--no-source-maps`), which writes `dist/content.js` and `dist/connect.js`,
+then copies `dist`, `img`, `LICENSE` and `background.js` into
+`build/firefox`, writes the Firefox manifest there (Chrome's `manifest.json`
+with `background.scripts` and `browser_specific_settings` added), and zips
+it as `pullapprove-browser-extension-firefox.zip`. The Chrome zip is the
+same files with the unmodified `manifest.json`.
+
+Everything outside `dist` and `build` is hand-written source; `dist` is the
+only generated output.
+
 Safari needs a wrapper app built with `xcrun safari-web-extension-converter`
 from this directory. Build it with the Release configuration: a Debug build
 splits the extension into a stub plus a debug dylib that an ad-hoc signed,
