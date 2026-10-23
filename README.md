@@ -18,7 +18,10 @@ so you can review just what's yours without leaving GitHub.
 
 ![](example-files.png)
 
-You need to be logged in to PullApprove in the same browser.
+To use it, connect the extension to your PullApprove account once in each
+browser: open a pull request and click **Connect** in the PullApprove sidebar,
+or go to https://5.pullapprove.com/extension/connect/. To disconnect a
+browser, go to **My account** on PullApprove.
 
 ## Development
 
@@ -30,4 +33,6 @@ npm run build        # or `npm start` to rebuild on change
 Then in Chrome open `chrome://extensions`, turn on **Developer mode**, click
 **Load unpacked**, and pick this directory. An unpacked build reloads itself
 when `dist/content.js` changes, so after a rebuild just refresh the GitHub tab
-(twice: the first request is what notices the new build).
+(twice: the first request is what notices the new build). That only watches
+`dist/content.js`: after changing `connect.js`, reload the extension from
+`chrome://extensions` yourself.

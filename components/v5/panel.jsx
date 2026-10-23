@@ -138,10 +138,14 @@ export default function Panel({ response }) {
     return (
       <SidebarItem>
         <div className="flash p-2">
-          <a href={baseUrl} target="_blank" rel="noreferrer">
-            Log in to PullApprove
+          <a
+            href={`${baseUrl}/extension/connect/`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Connect this browser
           </a>{" "}
-          to see this pull request's review status here.
+          to see review status here.
         </div>
       </SidebarItem>
     );

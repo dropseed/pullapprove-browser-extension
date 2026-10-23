@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "rm -rf dist && parcel build content.js --no-cache --no-source-maps",
-    "start": "parcel content.js --no-source-maps",
+    "build": "rm -rf dist && parcel build content.js connect.js --no-cache --no-source-maps",
+    "start": "parcel content.js connect.js --no-source-maps",
     "format": "prettier --write *.js components",
     "pre-commit": "prettier --check *.js components"
   },

@@ -6,7 +6,7 @@ import { mountAboveSidebar } from "../page";
 import { pullRequestStateLabel } from "../github";
 
 // PullApprove 5: the PR is looked up on PullApprove by org/repo/number (via
-// the service worker, with the viewer's PullApprove session), then rendered
+// the service worker, with this browser's extension token), then rendered
 // as a sidebar panel and, on the files tab, as marks on your files plus an
 // "only files in my scopes" filter.
 //
@@ -40,6 +40,15 @@ const EMPTY = {
   renderedJson: null,
 };
 let current = { ...EMPTY };
+
+// Connecting or disconnecting changes what PullApprove will answer, so the
+// next sync of a visible tab (within a second) fetches a new one. The last
+// answer stays up until it arrives; a hidden tab catches up when looked at.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.token) {
+    current.fetchedAt = 0;
+  }
+});
 
 export function unmountV5() {
   current.root?.unmount();

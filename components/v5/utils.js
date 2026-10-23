@@ -1,7 +1,9 @@
+// background.js has its own copy of this (it isn't bundled); keep them the same.
 const BASE_URL = "https://5.pullapprove.com";
 
 // Asks the service worker to fetch the PR from PullApprove's extension endpoint
-// (see background.js). Resolves to { status, json, data }: `data` is the body
+// (see background.js, which authenticates the request with this browser's
+// extension token). Resolves to { status, json, data }: `data` is the body
 // when it was JSON — on a 200 the payload (status, next steps, scopes, and
 // files, each already marked as the viewer's or not), on an error the server's
 // { id, message }. The extension does no ownership math.
