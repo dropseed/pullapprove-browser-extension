@@ -10,29 +10,31 @@
     "128": "img/icon-128.png"
   },
   "homepage_url": "https://www.pullapprove.com/",
-  "permissions": ["storage"],
-  "host_permissions": ["https://5.pullapprove.com/*"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://5.pullapprove.com/*"
+  ],
   "background": {
-    "service_worker": "background.js",
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
-      "js": ["dist/content.js"]
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "dist/content.js"
+      ]
     },
     {
-      "matches": ["https://5.pullapprove.com/extension/connect/*"],
-      "js": ["dist/connect.js"]
+      "matches": [
+        "https://5.pullapprove.com/extension/connect/*"
+      ],
+      "js": [
+        "dist/connect.js"
+      ]
     }
-  ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "browser-extension@pullapprove.com",
-      "strict_min_version": "140.0",
-      "data_collection_permissions": {
-        "required": ["authenticationInfo", "websiteActivity"]
-      }
-    }
-  }
+  ]
 }

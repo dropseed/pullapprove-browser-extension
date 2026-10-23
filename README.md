@@ -37,11 +37,14 @@ when `dist/content.js` changes, so after a rebuild just refresh the GitHub tab
 `dist/content.js`: after changing `connect.js`, reload the extension from
 `chrome://extensions` yourself.
 
-In Firefox, open `about:debugging#/runtime/this-firefox`, click **Load
-Temporary Add-on…**, and pick `manifest.json`. Firefox runs `background.js`
-as a background script rather than a service worker (the manifest declares
-both), and the add-on is gone when Firefox quits. `npx web-ext lint` checks
-the manifest against what Firefox and AMO accept.
+Firefox gets its own build: `./scripts/build-firefox` writes `build/firefox`
+with a manifest that declares `background.js` as a background script (Firefox
+runs no service workers) and the add-on id and data collection declaration
+AMO requires. Chrome warns about those keys, which is why they aren't in
+`manifest.json`. Then open `about:debugging#/runtime/this-firefox`, click
+**Load Temporary Add-on…**, and pick `build/firefox/manifest.json`; the
+add-on is gone when Firefox quits. `npx web-ext lint --source-dir
+build/firefox` checks it against what Firefox and AMO accept.
 
 Safari needs a wrapper app built with `xcrun safari-web-extension-converter`
 from this directory. Build it with the Release configuration: a Debug build

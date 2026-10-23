@@ -1,0 +1,38 @@
+#!/bin/sh -e
+# Builds the Firefox variant into build/firefox and zips it for AMO.
+#
+# manifest.json is Chrome's. Firefox runs no background service workers and
+# wants its own add-on id, and Chrome warns about both of those keys, so the
+# Firefox manifest is derived here rather than kept in the shared file.
+cd "$(dirname "$0")/.."
+
+npm run build
+
+rm -rf build/firefox
+mkdir -p build/firefox
+cp -R dist img LICENSE background.js build/firefox/
+
+node - <<'JS'
+const fs = require("fs");
+const manifest = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
+manifest.background = { scripts: ["background.js"] };
+manifest.browser_specific_settings = {
+  gecko: {
+    id: "browser-extension@pullapprove.com",
+    strict_min_version: "140.0",
+    // What the extension sends to PullApprove: the token it was connected
+    // with, and which pull requests are being viewed.
+    data_collection_permissions: {
+      required: ["authenticationInfo", "websiteActivity"],
+    },
+  },
+};
+fs.writeFileSync(
+  "build/firefox/manifest.json",
+  JSON.stringify(manifest, null, 2) + "\n"
+);
+JS
+
+rm -f pullapprove-browser-extension-firefox.zip
+(cd build/firefox && zip -qr ../../pullapprove-browser-extension-firefox.zip .)
+echo "Built build/firefox and pullapprove-browser-extension-firefox.zip"

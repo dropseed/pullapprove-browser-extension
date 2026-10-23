@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds the `storage` permission, which the extension uses to keep that token.
 - To disconnect a browser, go to your account page on PullApprove. A token also expires after 30 days without being used, and the sidebar asks you to connect again.
 - Incognito and private windows now share the normal windows' connection (one token per browser profile) instead of running a separate copy of the extension, which only made sense when the session cookie was the login.
-- Runs in Firefox: the background script is declared the way Firefox needs it, and the manifest carries a Firefox add-on id and data collection declaration (the token it sends to PullApprove, and which pull requests you view).
+- Runs in Firefox, as a separate build (`scripts/build-firefox`) whose manifest declares the background script the way Firefox needs it, plus the add-on id and data collection declaration AMO requires (the token it sends to PullApprove, and which pull requests you view).
 
 ## [0.4.2] - 2026-10-15
 
