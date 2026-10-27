@@ -1,0 +1,40 @@
+#!/bin/sh -e
+# Uploads the archive from scripts/build-safari to App Store Connect.
+#
+# Signing uses the Apple account signed into Xcode (team XU33B862HJ), which
+# -allowProvisioningUpdates lets xcodebuild create certificates and profiles
+# with. The app record (bundle id com.dropseed.pullapprove.safari) has to
+# exist on App Store Connect first; the upload fails with a clear message if
+# it doesn't.
+cd "$(dirname "$0")/.."
+
+export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+
+ARCHIVE="build/safari/PullApprove.xcarchive"
+if [ ! -d "$ARCHIVE" ]; then
+  echo "No archive at $ARCHIVE. Run scripts/build-safari first." >&2
+  exit 1
+fi
+
+OPTIONS="build/safari/upload-options.plist"
+cat > "$OPTIONS" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key><string>app-store-connect</string>
+  <key>destination</key><string>upload</string>
+  <key>teamID</key><string>XU33B862HJ</string>
+  <key>signingStyle</key><string>automatic</string>
+  <key>uploadSymbols</key><true/>
+</dict>
+</plist>
+PLIST
+
+rm -rf build/safari/upload
+xcodebuild -exportArchive -archivePath "$ARCHIVE" \
+  -exportOptionsPlist "$OPTIONS" -exportPath build/safari/upload \
+  -allowProvisioningUpdates \
+  | grep -E "error|Upload|EXPORT" || true
+
+echo "Uploaded. It shows up under TestFlight / Builds on App Store Connect after processing."

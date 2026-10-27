@@ -1,0 +1,36 @@
+#!/bin/sh -e
+# Syncs the extension into the Safari wrapper app's Xcode project (safari/)
+# and archives it for the Mac App Store.
+#
+# The Xcode project was generated once with
+#   xcrun safari-web-extension-converter --copy-resources ...
+# so it carries its own copy of the extension files; this is what refreshes
+# that copy. Build the Release configuration: a Debug build splits the
+# extension into a stub plus a debug dylib that a sandboxed extension can't
+# load, and Safari then silently hides it.
+cd "$(dirname "$0")/.."
+
+export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+
+npm run build
+
+RESOURCES="safari/PullApprove/PullApprove Extension/Resources"
+rm -rf "$RESOURCES/dist" "$RESOURCES/img"
+cp -R dist "$RESOURCES/dist"
+cp -R img "$RESOURCES/img"
+cp manifest.json background.js "$RESOURCES/"
+
+# The app's version tracks the extension's.
+VERSION=$(node -p 'require("./manifest.json").version')
+sed -E -i "" "s/MARKETING_VERSION = [0-9.]+;/MARKETING_VERSION = $VERSION;/g" \
+  safari/PullApprove/PullApprove.xcodeproj/project.pbxproj
+
+ARCHIVE="build/safari/PullApprove.xcarchive"
+rm -rf "$ARCHIVE"
+xcodebuild -project safari/PullApprove/PullApprove.xcodeproj \
+  -scheme PullApprove -configuration Release \
+  -archivePath "$ARCHIVE" -allowProvisioningUpdates archive \
+  | grep -E "error:|warning: .*sign|ARCHIVE" || true
+
+echo "Archived $ARCHIVE (version $VERSION)."
+echo "Upload it from Xcode > Window > Organizer, or with scripts/upload-safari."

@@ -6,3 +6,5 @@
 .parcel-cache
 build/
 *.zip
+safari/PullApprove/PullApprove Extension/Resources/
+safari/**/xcuserdata/

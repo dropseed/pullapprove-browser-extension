@@ -69,9 +69,15 @@ same files with the unmodified `manifest.json`.
 Everything outside `dist` and `build` is hand-written source; `dist` is the
 only generated output.
 
-Safari needs a wrapper app built with `xcrun safari-web-extension-converter`
-from this directory. Build it with the Release configuration: a Debug build
-splits the extension into a stub plus a debug dylib that an ad-hoc signed,
-sandboxed extension can't load, and Safari then silently hides it. The app
-and its extension must both be sandboxed, and Safari must have **Allow
-unsigned extensions** turned on (it resets every launch).
+Safari needs a wrapper app, which lives in `safari/` as an Xcode project
+(generated once with `xcrun safari-web-extension-converter`, then kept in
+git). `./scripts/build-safari` builds the extension, copies it into the
+project's `PullApprove Extension/Resources` folder (gitignored; it's a copy),
+and archives the Release configuration. `./scripts/upload-safari` sends that
+archive to App Store Connect, where it's distributed through the Mac App
+Store. Both scripts sign with the Apple account signed into Xcode.
+
+Build the Release configuration: a Debug build splits the extension into a
+stub plus a debug dylib that a sandboxed extension can't load, and Safari
+then silently hides it. To run an unsigned local build, Safari must have
+**Allow unsigned extensions** turned on (it resets every launch).
