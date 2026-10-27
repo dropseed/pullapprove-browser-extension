@@ -165,6 +165,22 @@ export default function Panel({ response }) {
     );
   }
 
+  if (status === 403 && data?.id === "sso_required") {
+    // The organization uses SAML single sign-on and refuses the user's
+    // token until they sign in with it and reconnect.
+    return (
+      <SidebarItem>
+        <div className="flash flash-warn p-2">
+          {data.message}{" "}
+          <a href={data.url} target="_blank" rel="noreferrer">
+            Finish signing in
+          </a>{" "}
+          to see review status here.
+        </div>
+      </SidebarItem>
+    );
+  }
+
   if (status === 404 && !json) {
     // The server doesn't have the extension endpoint at all: a self-hosted
     // PullApprove that predates it. A JSON 404 is a PR we can't see (not a
