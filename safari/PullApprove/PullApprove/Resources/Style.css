@@ -43,3 +43,7 @@ body.state-off :is(.state-on, .state-unknown) {
 button {
     font-size: 1em;
 }
+
+.next-step {
+    opacity: 0.6;
+}

@@ -20,9 +20,13 @@ cp -R dist "$RESOURCES/dist"
 cp -R img "$RESOURCES/img"
 cp manifest.json background.js "$RESOURCES/"
 
-# The app's version tracks the extension's.
+# The app's version tracks the extension's. The build number has to go up
+# with every upload of the same version, so it's the current UTC time.
 VERSION=$(node -p 'require("./manifest.json").version')
-sed -E -i "" "s/MARKETING_VERSION = [0-9.]+;/MARKETING_VERSION = $VERSION;/g" \
+BUILD=$(date -u +%Y%m%d%H%M)
+sed -E -i "" \
+  -e "s/MARKETING_VERSION = [0-9.]+;/MARKETING_VERSION = $VERSION;/g" \
+  -e "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = $BUILD;/g" \
   safari/PullApprove/PullApprove.xcodeproj/project.pbxproj
 
 ARCHIVE="build/safari/PullApprove.xcarchive"
@@ -32,5 +36,5 @@ xcodebuild -project safari/PullApprove/PullApprove.xcodeproj \
   -archivePath "$ARCHIVE" -allowProvisioningUpdates archive \
   | grep -E "error:|warning: .*sign|ARCHIVE" || true
 
-echo "Archived $ARCHIVE (version $VERSION)."
+echo "Archived $ARCHIVE (version $VERSION, build $BUILD)."
 echo "Upload it from Xcode > Window > Organizer, or with scripts/upload-safari."

@@ -32,9 +32,13 @@ cat > "$OPTIONS" <<'PLIST'
 PLIST
 
 rm -rf build/safari/upload
-xcodebuild -exportArchive -archivePath "$ARCHIVE" \
+LOG="build/safari/upload.log"
+if ! xcodebuild -exportArchive -archivePath "$ARCHIVE" \
   -exportOptionsPlist "$OPTIONS" -exportPath build/safari/upload \
-  -allowProvisioningUpdates \
-  | grep -E "error|Upload|EXPORT" || true
+  -allowProvisioningUpdates > "$LOG" 2>&1; then
+  grep -E "error:" "$LOG" >&2 || tail -20 "$LOG" >&2
+  echo "Upload failed; full log in $LOG" >&2
+  exit 1
+fi
 
 echo "Uploaded. It shows up under TestFlight / Builds on App Store Connect after processing."
