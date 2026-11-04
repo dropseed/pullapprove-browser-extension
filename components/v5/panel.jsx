@@ -181,6 +181,23 @@ export default function Panel({ response }) {
     );
   }
 
+  if (status === 403 && data?.id === "oauth_connection_refresh_required") {
+    // PullApprove can no longer refresh its own GitHub token for this user,
+    // which this browser's token can't fix. Reconnecting GitHub on
+    // PullApprove does.
+    return (
+      <SidebarItem>
+        <div className="flash flash-warn p-2">
+          PullApprove lost its connection to your GitHub account.{" "}
+          <a href={data.url} target="_blank" rel="noreferrer">
+            Reconnect it
+          </a>{" "}
+          to see review status here.
+        </div>
+      </SidebarItem>
+    );
+  }
+
   if (status === 404 && !json) {
     // The server doesn't have the extension endpoint at all: a self-hosted
     // PullApprove that predates it. A JSON 404 is a PR we can't see (not a
