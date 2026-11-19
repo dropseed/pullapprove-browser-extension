@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-11-19
+
+- Works with GitHub's new pull request "Overview" page (the feature preview). The PullApprove sidebar shows at the top of the Overview's sidebar, and so do PullApprove v3 reports, which the Overview hides in its collapsed checks list. The classic Conversation page works the same as before.
+- Checks PullApprove less often when the answer probably isn't going to change. On a pull request PullApprove doesn't have (or you can't see), each answer in a row doubles the wait, up to 10 minutes, where it used to ask every 15 seconds for as long as the tab was open. Merged and closed pull requests are checked every 10 minutes too. Reopening one, or opening a different pull request, goes right back to every 15 seconds.
+
 ## [0.5.0] - 2026-10-23
 
 - The extension now authenticates with its own token for each browser instead of your PullApprove session cookie. You set it up once: the sidebar on a pull request asks you to connect, which opens PullApprove's connect page, and one click there connects that browser. This fixes Safari, where the session cookie never reached PullApprove.
