@@ -16,23 +16,36 @@ import { pullRequestStateLabel } from "../github";
 // costs nothing) and catches up within a second of being looked at again.
 // The one change worth not waiting for is GitHub's state label (draft, ready,
 // merged, closed), which refetches right away.
+//
+// A 4xx answer rarely changes in the next POLL_MS: a 404 is a PR
+// PullApprove doesn't have or the viewer can't see, a 403 one the sidebar
+// can only explain, and the rest (a dropped token, an outdated build, rate
+// limiting) are no better asked again soon. So each 4xx in a row doubles the
+// wait, up to MAX_POLL_MS. A tab left open on one asks a few times an hour
+// instead of four times a minute, and a PR opened moments ago, before
+// PullApprove has processed it, is asked about again 30 seconds later, then
+// a minute after that.
 
 const SIDEBAR_ID = "pullapprove-v5-sidebar";
 
 // How stale a visible tab's answer may get before it's fetched again.
 const POLL_MS = 15 * 1000;
+const MAX_POLL_MS = 10 * 60 * 1000;
 
 // How long after GitHub's state label changes to fetch again, by which point
 // PullApprove has usually processed the webhook (a few seconds in practice).
 const REFETCH_AFTER_STATE_CHANGE_MS = 6 * 1000;
 
-// One PR at a time: its latest fetch, the last state label shown, the
-// sidebar React root, the files tab UI, and which fetch they're showing.
+// One PR at a time: its latest fetch, how many 4xx answers in a row came
+// back and the last one's status, the last state label shown, the sidebar
+// React root, the files tab UI, and which fetch they're showing.
 const EMPTY = {
   key: null,
   page: null,
   promise: null,
   fetchedAt: 0,
+  misses: 0,
+  missStatus: 0,
   lastState: "",
   root: null,
   filesTab: null,
@@ -47,8 +60,22 @@ let current = { ...EMPTY };
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes.token) {
     current.fetchedAt = 0;
+    current.misses = 0;
+    current.missStatus = 0;
   }
 });
+
+// A 403 is usually fixed in another tab or window (finishing single sign-on,
+// reconnecting GitHub), so a tab backing off from one catches up as soon as
+// it's looked at again: shown again, or its window focused again (a window
+// beside the other one never stops being visible).
+function catchUpAfter403() {
+  if (!document.hidden && current.missStatus === 403) {
+    current.fetchedAt = 0;
+  }
+}
+document.addEventListener("visibilitychange", catchUpAfter403);
+window.addEventListener("focus", catchUpAfter403);
 
 export function unmountV5() {
   current.root?.unmount();
@@ -79,7 +106,7 @@ export async function mountV5(page) {
         fetchLatest();
       }
     }, REFETCH_AFTER_STATE_CHANGE_MS);
-  } else if (Date.now() - current.fetchedAt > POLL_MS) {
+  } else if (Date.now() - current.fetchedAt > pollInterval()) {
     fetchLatest();
   }
 
@@ -110,18 +137,32 @@ export async function mountV5(page) {
   renderFilesTab(current.page, response);
 }
 
+function pollInterval() {
+  return Math.min(POLL_MS * 2 ** current.misses, MAX_POLL_MS);
+}
+
 // A refetch that fails for a passing reason (a laptop waking up, a
-// PullApprove deploy) keeps showing the last answer rather than blanking it.
+// PullApprove deploy) keeps showing the last answer rather than blanking it,
+// and doesn't count toward backing off.
 function fetchLatest() {
-  const previous = current.promise;
-  current.fetchedAt = Date.now();
-  current.promise = fetchPullRequest(current.page).then((response) => {
-    const transient = response.status === 0 || response.status >= 500;
-    if (transient && previous) {
-      return previous;
+  // This PR's state, which navigating away replaces before the answer lands.
+  const pr = current;
+  const previous = pr.promise;
+  pr.fetchedAt = Date.now();
+  const promise = fetchPullRequest(pr.page).then((response) => {
+    if (response.status === 0 || response.status >= 500) {
+      return previous || response;
+    }
+    // Only the latest request's answer counts toward backing off, not one a
+    // newer request has replaced.
+    if (pr.promise === promise) {
+      const miss = response.status >= 400;
+      pr.misses = miss ? pr.misses + 1 : 0;
+      pr.missStatus = miss ? response.status : 0;
     }
     return response;
   });
+  pr.promise = promise;
 }
 
 // The label counts as changed only when it goes from one shown value to
