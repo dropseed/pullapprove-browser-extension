@@ -25,12 +25,19 @@ import { pullRequestStateLabel } from "../github";
 // instead of four times a minute, and a PR opened moments ago, before
 // PullApprove has processed it, is asked about again 30 seconds later, then
 // a minute after that.
+//
+// A merged or closed PR's answer rarely changes either, so its tab asks
+// every MAX_POLL_MS too. Reopening it changes the state label, which
+// refetches right away as above.
 
 const SIDEBAR_ID = "pullapprove-v5-sidebar";
 
 // How stale a visible tab's answer may get before it's fetched again.
 const POLL_MS = 15 * 1000;
 const MAX_POLL_MS = 10 * 60 * 1000;
+
+// GitHub's state labels for a pull request that's done.
+const DONE_STATES = ["Merged", "Closed"];
 
 // How long after GitHub's state label changes to fetch again, by which point
 // PullApprove has usually processed the webhook (a few seconds in practice).
@@ -138,6 +145,9 @@ export async function mountV5(page) {
 }
 
 function pollInterval() {
+  if (DONE_STATES.includes(current.lastState)) {
+    return MAX_POLL_MS;
+  }
   return Math.min(POLL_MS * 2 ** current.misses, MAX_POLL_MS);
 }
 
