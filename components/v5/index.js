@@ -2,7 +2,7 @@ import React from "react";
 import Panel from "./panel";
 import FilesTab from "./files-tab";
 import { fetchPullRequest } from "./utils";
-import { mountAboveSidebar } from "../page";
+import { mountAtTopOfSidebar } from "../page";
 import { pullRequestStateLabel } from "../github";
 
 // PullApprove 5: the PR is looked up on PullApprove by org/repo/number (via
@@ -58,7 +58,7 @@ export function unmountV5() {
 }
 
 export async function mountV5(page) {
-  const key = `${page.org}/${page.repo}/${page.number}`;
+  const key = page.key;
   if (current.key !== key) {
     unmountV5();
     current.key = key;
@@ -141,7 +141,7 @@ function renderSidebar(response) {
     return;
   }
   current.root?.unmount();
-  current.root = mountAboveSidebar(SIDEBAR_ID, <Panel response={response} />);
+  current.root = mountAtTopOfSidebar(SIDEBAR_ID, <Panel response={response} />);
 }
 
 // The files tab UI lives only while the files tab is showing: it's torn down

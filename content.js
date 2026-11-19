@@ -13,14 +13,17 @@ function sync() {
     unmountV5();
     return;
   }
-  mountV3();
+  mountV3(page);
   mountV5(page);
 }
 
 sync();
+// Turbo drives the classic pages; the React ones (the files tab, the
+// Overview) route client-side and say so with soft-nav events instead.
 document.addEventListener("turbo:load", sync);
+document.addEventListener("soft-nav:end", sync);
 window.addEventListener("popstate", sync);
-// The catch-all: the files tab routes client-side without either event above,
-// and GitHub sometimes swaps the sidebar out on the same URL. It's also what
-// drives v5's poll.
+// The catch-all: React re-renders the sidebar on the same URL without any
+// event, and an event's sync can run before the new page has rendered. It's
+// also what drives v5's poll.
 setInterval(sync, 1000);

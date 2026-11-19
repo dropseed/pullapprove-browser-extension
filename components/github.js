@@ -9,11 +9,21 @@
 // from the console.
 
 export const SELECTORS = {
-  // Conversation tab. The PullApprove panels mount just above it (v3 and
-  // v5). A Rails-era id; when GitHub moves this page to React, this is the
-  // first thing to check.
+  // Two pages serve a pull request's first tab: the classic Conversation
+  // page, and the React "Overview" (a feature preview each user opts into;
+  // `?overview=false` shows the classic page for one visit). The PullApprove
+  // panels (v3 and v5) go at the top of whichever sidebar is there. Both
+  // missing on that tab: no panels.
+  //
+  // Classic: a Rails-era id. The panels mount just above it.
   sidebar: "#partial-discussion-sidebar",
-  // Conversation tab. Where the v3 status-check report links appear.
+  // Overview: a test id on the column of sidebar sections. The panels mount
+  // inside it, ahead of GitHub's sections.
+  overviewSidebar: "[data-testid='sticky-sidebar']",
+  // Classic Conversation tab. Where the v3 status-check report links appear.
+  // The Overview has no equivalent (its checks list is collapsed, so the
+  // links aren't in the page); v3 asks GitHub for its statuses there, via
+  // fetchStatusChecks.
   timeline: ".pull-discussion-timeline",
   // Files tab. The "Filter files..." box the All/Mine toggle goes under,
   // rendered twice: in the sidebar tree and in the narrow layout's Files
@@ -48,24 +58,50 @@ export function diffContainerDigest(container) {
   return container.id.match(DIFF_ID)?.[1];
 }
 
-// GitHub renders its pages in stages, so a selector that finds nothing right
-// after a navigation usually just hasn't rendered yet. `isPresent` is checked
-// again once things have settled, and the selector is reported (once per
-// page) only if it's still missing then.
-const pending = new Set();
+// The PR sidebar on the first tab, as { element, overview } (overview: the
+// React Overview's, not the classic page's), or null when there isn't one.
+export function findSidebar() {
+  const classic = document.querySelector(SELECTORS.sidebar);
+  if (classic) {
+    return { element: classic, overview: false };
+  }
+  const overview = document.querySelector(SELECTORS.overviewSidebar);
+  return overview ? { element: overview, overview: true } : null;
+}
+
+// Something about GitHub that stopped matching what the extension expects,
+// logged once per page load (GitHub's client-side navigation doesn't count
+// as a new one).
 const reported = new Set();
 
-export function reportIfStillMissing(name, isPresent) {
+function debugOnce(name, message) {
+  if (!reported.has(name)) {
+    reported.add(name);
+    console.debug(`PullApprove: ${message}`);
+  }
+}
+
+// GitHub renders its pages in stages, so a selector that finds nothing right
+// after a navigation usually just hasn't rendered yet. `isPresent` is checked
+// again once things have settled, and the selector is reported (once, via
+// debugOnce) only if it's still missing then.
+const pending = new Set();
+
+export function reportIfStillMissing(
+  name,
+  isPresent,
+  selector = SELECTORS[name]
+) {
   if (pending.has(name) || reported.has(name)) {
     return;
   }
   pending.add(name);
   setTimeout(() => {
     pending.delete(name);
-    if (!isPresent() && !reported.has(name)) {
-      reported.add(name);
-      console.debug(
-        `PullApprove: GitHub element not found: ${name} (${SELECTORS[name]}). ` +
+    if (!isPresent()) {
+      debugOnce(
+        name,
+        `GitHub element not found: ${name} (${selector}). ` +
           "GitHub's markup may have changed."
       );
     }
@@ -108,6 +144,47 @@ function embeddedChangesRoute() {
       JSON.parse(script.textContent)?.payload?.pullRequestsChangesRoute || null
     );
   } catch {
+    return null;
+  }
+}
+
+// The pull request's commit statuses and checks, as [{ name, url }] (url is
+// the Details link, or null), or null when GitHub didn't answer with them.
+//
+// The Overview's merge box fetches this to render its checks list, which it
+// shows collapsed, so unlike on the classic page the links aren't in the DOM.
+// An internal GitHub endpoint, not an API: it answers JSON only to requests
+// that say they're XHR (anything else gets a 406), and its shape can change
+// without notice. A change here shows up as v3 reports missing from the
+// Overview, with a console message.
+export async function fetchStatusChecks({ org, repo, number }) {
+  const path = `/${org}/${repo}/pull/${number}/page_data/status_checks`;
+  try {
+    const response = await fetch(new URL(path, window.location.origin), {
+      headers: {
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      // A request that stalls (a laptop sleeping mid-request) would otherwise
+      // hold up every later read.
+      signal: AbortSignal.timeout(15 * 1000),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const { statusChecks } = await response.json();
+    if (!Array.isArray(statusChecks)) {
+      throw new Error("no statusChecks in the response");
+    }
+    return statusChecks.map((check) => ({
+      name: check.displayName || "",
+      url: check.targetUrl || null,
+    }));
+  } catch (error) {
+    debugOnce(
+      "statusChecks",
+      `couldn't read the pull request's status checks from ${path}: ${error}`
+    );
     return null;
   }
 }
